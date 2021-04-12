@@ -45,10 +45,10 @@ los primeros, los segundos y los postres. Optativamente puedes adornar la forma 
 '''
 import sqlite3
 import tkinter as tk
-import time
+from tkinter import messagebox
 
-#La función crear_bd se encarga de crear la base de datos llamada reataurante.bd, path es el padre donde dicha función va a crear un nuevo label
-def crear_bd(path):
+#La función crear_bd se encarga de crear la base de datos llamada reataurante.bd
+def crear_bd():
     connection = sqlite3.connect("restaurante.db")
     cursor = connection.cursor()
     cursor.execute('''
@@ -68,37 +68,41 @@ def crear_bd(path):
                     ''')
     connection.commit()
     connection.close()
-    #En este momento crea un nuevo label en el layout de la app, para informar que la bbdd se ha creado correctamente
-    tk.Label(path, text="DB created successfully").pack(side="top", anchor="n", padx=10, pady=10)
+    #En este momento se lanza  un nuevo mensaje en el layout de la app, para informar que la bbdd se ha creado correctamente
+    messagebox.showinfo(message="DB created successfully", title="Create DB")
 
 #La función crear:_categoria se encarga de crwear una nueva categoría, siempre que ésta no exista ya en la base de datos
-#a la función se le pasa como parámetro el path, la ruta del padre donde va a crear el mensaje y la nueva categoria
+#a la función se le pasa como parámetro la ruta del padre donde va a crear el mensaje y la nueva categoria
 #introducida por el usuario
-def crear_categoria(path, newCat):
+def crear_categoria(newCat):
             #Se hace un try para intentar introducir esa nueva categoria en la base de datos
-            try:
-                connection = sqlite3.connect("restaurante.db")
-                cursor = connection.cursor()
-                cursor.execute("INSERT INTO categoria VALUES (null,?)", (newCat,))
-                connection.commit()
-                connection.close()
-            except sqlite3.IntegrityError:
-                #En caso que se lance un error se captura aquí y se muestra un label por pantalla para informar al
-                #respecto
-                print(f"La categoria {newCat} no se puede introducir. | No se puede repetir categorias")
-                expression = f"La categoria {newCat} no se puede introducir. | No se puede repetir categorias"
-                tk.Label(path, text=expression).pack(side="top", anchor="n", padx=10, pady=10)
-            else:
-                #En caso que se haya podido añadir la categoría se crea otro label para informar al respecto
-                print(f"La categoria {newCat} se ha añadido satisfactoriamente.")
-                expression = f"La categoria {newCat} se ha añadido satisfactoriamente."
-                tk.Label(path, text=expression).pack(side="top", anchor="n", padx=10, pady=10)
+            if newCat != "":
+                try:
+                    connection = sqlite3.connect("restaurante.db")
+                    cursor = connection.cursor()
+                    cursor.execute("INSERT INTO categoria VALUES (null,?)", (newCat,))
+                    connection.commit()
+                    connection.close()
+                except sqlite3.IntegrityError:
+                    #En caso que se lance un error se captura aquí y se muestra un mensaje por pantalla para informar al
+                    #respecto
+                    print(f"La categoria {newCat} no se puede introducir. | No se puede repetir categorias")
+                    expression = f"The category {newCat} can not be added. | Categories can not be repeated"
+                    messagebox.showerror(message=expression, title="Add a new category")
 
+                else:
+                    #En caso que se haya podido añadir la categoría se lanza un mensaje para informar al respecto
+                    print(f"La categoria {newCat} se ha añadido satisfactoriamente.")
+                    expression = f"The category {newCat} has been added successfully."
+                    messagebox.showinfo(message=expression, title="Add a new category")
+            else:
+                messagebox.showwarning(message="You did not type any new category", title="Add a new category")
 
 
 #Se define la función agregar_plato, para agregar un nuevo plato, se le pasa como parámetro a la función la ruta del padre donde se va a crear el nuevo
 #mensaje informando del proceso, así como dle valor de la categoría ref y el nombre del plato newPlate
-def agregar_plato(path, ref, newPlate):
+def agregar_plato(ref, newPlate):
+        if newPlate != "" and ref != None:
             try:
                 connection = sqlite3.connect("restaurante.db")
                 cursor = connection.cursor()
@@ -109,29 +113,30 @@ def agregar_plato(path, ref, newPlate):
                 print(categories)
                 categoriesIndex = [item[0] for item in categories]
                 #Se hace uso de una comprenhension-list para capturar en una lista todoas las categorias que se tiene
-                #if ref in categories[0]:
                 #Si la categoria introducida por el usuario está en la lista se crea el nuevo plato
                 if ref in categoriesIndex:
                     cursor.execute("INSERT INTO plato VALUES (null,?,?)", (newPlate, ref))
                     expression = f"The plate: {newPlate} has been added into {ref} category"
-                    #Y se crea un nuevo label en el layout informando al respecto
-                    tk.Label(path, text=expression).pack(side="top", anchor="n", padx=10, pady=10)
+                    #Y se lanza un nuevo mensaje en el layout informando al respecto
+                    messagebox.showinfo(message=expression, title="Add a new plate")
                 else:
                     #Si la categoria no existe en la base de datos se informa al usuario
                     print("You have just selected a wrong category, please try again...")
                     expression = "You have just selected a wrong category, please try again..."
-                    #Se crea otro nuevo label en el layout para informar al respecto
-                    tk.Label(path, text=expression).pack(side="top", anchor="n", padx=10, pady=10)
+                    #Se lanza otro nuevo mensaje en el layout para informar al respecto
+                    messagebox.showwarning(message=expression, title="Add a new plate")
                 connection.commit()
                 connection.close()
             except sqlite3.IntegrityError:
                 #En caso que se intente introducir un plato repetido se captura el error
                 print(f"{newPlate} can not be added because it is in the menu...")
                 expression = f"{newPlate} can not be added because it is in the menu..."
-                #Y se crea un nuevo label para informar al respecto
-                tk.Label(path, text=expression).pack(side="top", anchor="n", padx=10, pady=10)
+                #Y se lanza un nuevo mensaje para informar al respecto
+                messagebox.showerror(message=expression, title="Add a new plate")
                 connection.commit()
                 connection.close()
+        else:
+            messagebox.showwarning(message="You did not type any new plate", title="Add a new plate")
 
 #Se define al función mostrar_menu para mostrar por pantalla todos los platos que se tiene en la base de datos
 def mostrar_menu(path):
@@ -145,8 +150,3 @@ def mostrar_menu(path):
         tk.Label(path, text= expression).pack(side="top", anchor="n", padx=10, pady=10)
     connection.commit()
     connection.close()
-
-#crear_bd()
-#crear_categoria()
-#agregar_plato()
-#mostrar_menu()

@@ -12,7 +12,7 @@ status = False
 
 #Se crea una función callToCreateBd para hacer una llamada a la función crear_bd del módulo restaurante
 def callToCreateBd():
-    restaurante.crear_bd(createBd)
+    restaurante.crear_bd()
 
 #Se crea una función callToShowMenu para invocar a la función mostrar_menu del módulo restaurante
 def callToShowMenu():
@@ -21,17 +21,18 @@ def callToShowMenu():
 #Se crea una función callToAddCategory para llamar a la fubnción crear_categoria del módulo restaurante
 def callToAddCategory():
     categoryName = categoryInput.get()
-    restaurante.crear_categoria(addCategoryFrame, categoryName)
+    restaurante.crear_categoria(categoryName)
+
 
 #Se crea una función callToAddNewPlate para llamar a la función agregar_plato del módulo restaurante
 def callToAddNewPlate():
     ref = int(newPlateInputCat.get())
     plateName = newPlateInput.get()
-    restaurante.agregar_plato(addPlateFrame, ref, plateName)
+    restaurante.agregar_plato(ref, plateName)
 
 #Se crea el frame root
 root = tk.Tk()
-root.title("Python Restaurant by Raul Vergel Romero")
+root.title("Python Restaurant")
 #Dentro del frame root, se define un frame para poder poner el título de la app
 titleFrame = tk.Frame(root)
 titleFrame.pack(side="top", anchor="n", fill="x")
@@ -50,25 +51,24 @@ createBdButton = tk.Button(createBd, text="create restaurante.db", command=callT
 createBdButton.pack(side="top", anchor="n")
 createBdButton.config(width=25, height=2, padx=10, pady=10)
 
+
 #Se define otro frame para definir el layout de la parte de la app para crear una nueva categoria
 addCategoryFrame = tk.Frame(root)
 addCategoryFrame.pack(side="top", anchor="n", fill="x")
 addCategoryFrame.config(bg="#5E9BD8", padx=10, pady=10, bd=5, relief="sunken")
-
 #Se define un label dentro del frame, para informar al usuario que de debe introducir una nueva categoria
 categoryLabel = tk.Label(addCategoryFrame, text="Please, insert a new category", fg="#FAFAFB")
 categoryLabel.pack(sid="top", anchor="n", fill="x")
 categoryLabel.config(font=("Consolas", 12), padx=10, pady=10, bg="#5E9BD8")
-
 #Se define un entry para capturar la información por parte del usuario
 categoryInput = tk.Entry(addCategoryFrame)
 categoryInput.pack(padx=10, pady=10)
 categoryInput.config()
-
 #Se define el botón para disparar la función callToAddCategory cuando se pulse el botón
 categoryButton = tk.Button(addCategoryFrame, text="click to add", command=callToAddCategory)
 categoryButton.pack(side="top", anchor="n")
 categoryButton.config(width=25, height=2, padx=10, pady=10)
+
 
 #Se define otro frame para la parte del layout relativa a poder añadir un nuevo plato
 addPlateFrame = tk.Frame(root)
