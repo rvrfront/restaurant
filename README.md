@@ -18,4 +18,4 @@ Ejemplo de una app que simula el menu de un restaurante. Cuando se ejecuta la ap
  * click to show the menu
   * Muestra por pantalla todos los elementos de la base de datos
 
-Se amañde también la base de datos de prueba. Sin embargo se puede eliminar y crear una nueva desde cero.
+Se añade también la base de datos de prueba. Sin embargo se puede eliminar y crear una nueva desde cero.
